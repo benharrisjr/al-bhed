@@ -7,15 +7,62 @@
 </head>
 <body>
     <div class="col-md-4"></div>
-    <div class="col-md-4">
+    <div class="col-md-4" ng-controller="TranslatorController">
         <label for="untranslated">English</label>
-        <textarea class="form-control" rows="3" id="untranslated" data-ng-model="englishText" placeholder="Sample English text"></textarea>
+        <input type="text" class="form-control" rows="3" id="untranslated" data-ng-model="englishText" ng-change="change(englishText,e2a)" placeholder="Sample English text">
         <label for="translated">Al Bhed</label>
-        <textarea class="form-control" rows="3" id="translated" data-ng-model="albhedText"></textarea>
+        <input type="text" class="form-control" rows="3" id="translated" data-ng-model="albhedText">
     </div>
     <div class="col-md-4"></div>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
-    <!--<script type="text/javascript" src="js/AlbhedTranslatorApp.js.js"></script>-->
-    <script type="text/javascript" src="js/controllers/TranslatorController.js"></script>
+<script type="text/javascript">
+    function TranslatorController($scope) {
+        // map of English letters to Al Bhed letters
+        $scope.e2a = new Object;
+        $scope.e2a['a'] = 'y'; $scope.e2a['b'] = 'p'; $scope.e2a['c'] = 'l'; $scope.e2a['d'] = 't';
+        $scope.e2a['e'] = 'a'; $scope.e2a['f'] = 'v'; $scope.e2a['g'] = 'k'; $scope.e2a['h'] = 'r';
+        $scope.e2a['i'] = 'e'; $scope.e2a['j'] = 'z'; $scope.e2a['k'] = 'g'; $scope.e2a['l'] = 'm';
+        $scope.e2a['m'] = 's'; $scope.e2a['n'] = 'h'; $scope.e2a['o'] = 'u'; $scope.e2a['p'] = 'b';
+        $scope.e2a['q'] = 'x'; $scope.e2a['r'] = 'n'; $scope.e2a['s'] = 'c'; $scope.e2a['t'] = 'd';
+        $scope.e2a['u'] = 'i'; $scope.e2a['v'] = 'j'; $scope.e2a['w'] = 'f'; $scope.e2a['x'] = 'q';
+        $scope.e2a['y'] = 'o'; $scope.e2a['z'] = 'w';
+
+        // map of Al Bhed letters to English letters
+        $scope.a2e = new Object;
+        for (var letter in $scope.e2a){
+           $scope.a2e[$scope.e2a[letter]] = letter; 
+        }
+
+        $scope.englishText = "";
+        $scope.albhedText = "";
+        $scope.counter = 0;
+        $scope.change = function(s, map) {
+            var output = new Array;
+            var passthrough = false;
+
+            for (var i = 0, len = s.length; i < len; i++)
+            {
+                var c = s.charAt(i), l;
+
+                if (!passthrough)
+                {
+                if (c in map)
+                c = map[c];
+                else if ((l = c.toLowerCase()) in map)
+                c = map[l].toUpperCase()
+                else if (c == '[')
+                passthrough = true;
+            }
+            else if (c == ']')
+                passthrough = false;
+
+                output.push(c);
+            }
+
+            $scope.albhedText = output.join('');
+            return output.join('');
+        };
+    }
+</script>
 </body>
 </html>
