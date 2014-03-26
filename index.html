@@ -5,32 +5,32 @@
     <title>Al Bhed Translator</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 </head>
-<body ng-controller="TranslatorController" ng-switch on="order">
-    <div class="col-md-4"></div>
-    <div class="col-md-4" ng-switch-when="e2a">
+<body ng-controller="TranslatorController">
+    <main class="container">
         <h2>English to Al Bhed Translator</h2>
         <p class="well">Input the text you would like translated from english to Al Bhed in the top box, it will automatically be translated in the bottom box.</p>
-        <select ng-model="order" class="form-control" ng-options="order for order in orders"></select>
         <label for="untranslated">English</label>
-        <textarea class="form-control" rows="3" id="untranslated" data-ng-model="englishText" ng-change="change(englishText,e2a)" placeholder="Sample English text"></textarea>
+        <textarea class="form-control" rows="3" id="untranslated" data-ng-model="englishText" ng-change="change(englishText,e2a,0)" placeholder="{{untranslatedSample}}"></textarea>
         <label for="translated">Al Bhed</label>
-        <textarea class="form-control" rows="3" id="translated" data-ng-model="albhedText" placeholder="{{translatedSample}}"></textarea>
-    </div>
-    <div class="col-md-4" ng-controller="TranslatorController" ng-switch-when="a2e">
-        <h2>English to Al Bhed Translator</h2>
-        <p class="well">Input the text you would like translated from english to Al Bhed in the top box, it will automatically be translated in the bottom box.</p>
-        <select ng-model="order" class="form-control" ng-options="order for order in orders"></select>
-        <label for="translated">Al Bhed</label>
-        <textarea class="form-control" rows="3" id="translated" data-ng-model="albhedText" ng-change="change(albhedText,a2e)" placeholder="{{translatedSample}}"></textarea>
-        <label for="untranslated">English</label>
-        <textarea class="form-control" rows="3" id="untranslated" data-ng-model="englishText"placeholder="Sample English text" ></textarea>
-    </div>
-    <div class="col-md-4"></div>
+        <textarea class="form-control" rows="3" id="translated" data-ng-model="albhedText" ng-change="change(albhedText,a2e,1)" placeholder="{{translatedSample}}"></textarea>
+    </main>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
 <script type="text/javascript">
     function TranslatorController($scope) {
         $scope.orders = ['e2a','a2e'];
         $scope.order = $scope.orders[0];
+
+        $scope.changeOrder = function(){
+            console.log($scope.order);
+            if ($scope.order === $scope.orders[0]){
+                console.log("changing");
+                $scope.order = $scope.orders[1];
+            }
+            else if ($scope.order === $scope.orders[1]){
+                $scope.order = $scope.orders[0];
+            }
+            console.log($scope.order);
+        }
 
         // map of English letters to Al Bhed letters
         $scope.e2a = new Object;
@@ -50,7 +50,7 @@
         
         $scope.englishText = "";
         $scope.albhedText = "";
-        $scope.change = function(s, map) {
+        $scope.change = function(s, map, order) {
             var output = new Array;
             var passthrough = false;
 
@@ -73,10 +73,20 @@
                 output.push(c);
             }
 
-            $scope.albhedText = output.join('');
+            if(order === 0){
+                console.log(order);
+                $scope.albhedText = output.join('');
+            }
+            if(order === 1){
+                console.log(order);
+                $scope.englishText = output.join('');
+            }
+            
+            // $scope.albhedText = output.join('');
             return output.join('');
         };
-        $scope.translatedSample = $scope.change("Sample English text", $scope.e2a);
+        $scope.untranslatedSample = "Sample text";
+        $scope.translatedSample = $scope.change($scope.untranslatedSample, $scope.e2a);
     }
 </script>
 </body>
